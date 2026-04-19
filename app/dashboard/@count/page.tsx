@@ -1,7 +1,34 @@
+import { API_URL } from "@/constants";
 import axios from "axios";
+import { cookies } from "next/headers";
+
 const CountPage = async () => {
-    const countLocations = await axios.get("http://127.0.0.1:4000/locations");
-    return "Hay tantas localizaciones: " + countLocations?.data.length;
+    try {
+        // 1. Await necesario en Next.js 15/16
+        const cookieStore = await cookies(); 
+        
+        // 2. Asegúrate de que 'CookieName' sea el string correcto (ej. "token" o "session")
+        const token = cookieStore.get("auth_for_ocso")?.value;
+
+        if (!token) {
+            return <div className="p-4">No hay sesión activa</div>;
+        }
+
+        const response = await axios.get(`${API_URL}/locations`, {
+            headers: {
+                // Asegúrate de que tu backend de NestJS espere el formato Bearer
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const count = response.data.length;
+        const cantidadTiendas = count > 1 ? "tiendas" : "tienda";
+        return `Hay: ${count} ${cantidadTiendas}`
+    } catch (error: any) {
+        // 3. Log para saber qué falló (CORS, 401 Unauthorized, etc.)
+        console.error("Error en CountPage:", error.response?.status || error.message);
+        return <div className="p-4">Error cargando conteo</div>;
+    }
 }
 
 export default CountPage;
