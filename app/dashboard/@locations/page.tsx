@@ -1,7 +1,8 @@
 import { API_URL } from "@/constants";
 import { Location } from "@/entities";
+import { authHeaders } from "@/helpers/authHeaders";
 import axios from "axios";
-import { cookies } from "next/headers";
+import DeleteLocationButton from "./_components/DeleteLocationButton";
 import FormNewLocation from "./_components/FormNewLocation";
 import LocationCard from "./_components/LocationCard";
 import SelectLocation from "./_components/selectLocation";
@@ -19,23 +20,11 @@ const LocationsPage = async ({ searchParams }: Props) => {
 
   // 2. Lógica de obtención de datos para el selector
   try {
-    const cookieStore = await cookies();
-    const rawCookie = cookieStore.get("auth_for_ocso")?.value;
-
-    if (rawCookie) {
-        let decodedCookie = decodeURIComponent(rawCookie);
-        if (decodedCookie.startsWith('j:')) {
-            decodedCookie = decodedCookie.slice(2);
-        }
-        const cookieData = JSON.parse(decodedCookie);
-        const token = cookieData.token;
-
         const { data } = await axios.get<Location[]>(`${API_URL}/locations`, {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: await authHeaders()
         });
         locations = data;
-    }
-  } catch (error) {
+    } catch (error) {
     console.error("Error cargando ubicaciones:", error);
   }
 
@@ -54,9 +43,9 @@ const LocationsPage = async ({ searchParams }: Props) => {
 
       {/* Formulario de Nueva Ubicación (Debajo de la carta) */}
       <div className="w-full flex justify-center px-4">
-        <FormNewLocation />
+        <FormNewLocation searchParams={searchParams}/>
       </div>
-
+      <DeleteLocationButton store={store} />
     </div>
   );
 };

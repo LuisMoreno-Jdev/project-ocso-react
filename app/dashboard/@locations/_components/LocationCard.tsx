@@ -1,7 +1,7 @@
-import { API_URL, COOKIE_NAME } from "@/constants";
+import { API_URL } from "@/constants";
 import { Location } from "@/entities";
+import { authHeaders } from "@/helpers/authHeaders";
 import axios from "axios";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import MapSection from "./MapSection";
 
@@ -10,17 +10,8 @@ export default async function LocationCard({ store }: { store: string | string[]
     if (!store || store === "undefined" || store === "") return null;
 
     try {
-        const cookieStore = await cookies();
-        const rawCookie = cookieStore.get(COOKIE_NAME )?.value;
-        if (!rawCookie) return null;
-
-        let decodedCookie = decodeURIComponent(rawCookie);
-        if (decodedCookie.startsWith('j:')) decodedCookie = decodedCookie.slice(2);
-        const cookieData = JSON.parse(decodedCookie);
-        const token = cookieData.token;
-
         const { data } = await axios.get<Location>(`${API_URL}/locations/${store}`, {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: await authHeaders()
         });
 
         // Verificamos que existan coordenadas antes de renderizar el mapa
