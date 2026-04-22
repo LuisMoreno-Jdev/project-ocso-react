@@ -14,7 +14,6 @@ export default async function DashboardPage({
           <div className="h-[90vh] overflow-hidden overflow-y-auto">
             <EmployeesLocation store={store} />
           </div>
-          <div className="p-4 text-gray-500">Selecciona una tienda para ver los empleados</div>
       </div>
     </>
   );

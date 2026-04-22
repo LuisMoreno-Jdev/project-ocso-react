@@ -2,6 +2,7 @@ import { API_URL } from "@/constants";
 import { Location } from "@/entities";
 import axios from "axios";
 import { cookies } from "next/headers";
+import FormNewLocation from "./_components/FormNewLocation";
 import LocationCard from "./_components/LocationCard";
 import SelectLocation from "./_components/selectLocation";
 
@@ -39,25 +40,21 @@ const LocationsPage = async ({ searchParams }: Props) => {
   }
 
   return (
-    /* Contenedor principal: 
-       - justify-start y pt-10: Mueve todo arriba con el margen de 10 solicitado.
-       - flex-col e items-center: Centra los elementos horizontalmente.
-    */
-    <div className="w-full h-screen flex flex-col items-center justify-start pt-10">
+    <div className="w-full min-h-screen flex flex-col items-center justify-start pt-10 bg-[#fdf8f6]">
       
-      {/* 3. SECTOR SELECTOR (Más corto)
-          Se limita a max-w-md para que no se vea excesivamente ancho.
-      */}
+      {/* Selector de Tienda */}
       <div className="w-full max-w-md px-4">
         <SelectLocation locations={locations} store={store} />
       </div>
 
-      {/* 4. SECTOR CARTA DE MANAGER (Más ancho)
-          Se usa max-w-2xl y mt-10 para dar el efecto de la imagen donde 
-          la carta sobresale del ancho del selector.
-      */}
+      {/* Carta de Manager y Mapa */}
       <div className="w-full max-w-2xl px-4 mt-10">
         <LocationCard store={store} />
+      </div>
+
+      {/* Formulario de Nueva Ubicación (Debajo de la carta) */}
+      <div className="w-full flex justify-center px-4">
+        <FormNewLocation />
       </div>
 
     </div>

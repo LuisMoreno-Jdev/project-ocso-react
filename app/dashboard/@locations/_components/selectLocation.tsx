@@ -31,6 +31,7 @@ export default function SelectLocation({
     setSelected(location);
     setIsOpen(false);
     
+    // Al navegar sin el query param, LocationCard recibirá store=undefined y se ocultará.
     if (location) {
       router.push(`/dashboard?store=${location.locationId}`);
     } else {
@@ -39,11 +40,11 @@ export default function SelectLocation({
   };
 
   return (
-    <div className="relative w-full text-black font-sans">
+    <div className="relative w-full text-black font-sans z-[1001]">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full bg-white border border-gray-200 py-2 px-4 outline-none rounded-xl transition-all duration-300 hover:ring-2 hover:ring-red-300 hover:border-transparent flex justify-between items-center shadow-sm text-left relative z-50"
+        className="w-full bg-white border border-gray-200 py-2 px-4 outline-none rounded-xl transition-all duration-300 hover:ring-2 hover:ring-red-300 hover:border-transparent flex justify-between items-center shadow-sm text-left relative z-[1001]"
       >
         <div className="flex flex-col">
           <span className="text-[10px] uppercase font-bold text-gray-500 leading-tight">
@@ -58,7 +59,7 @@ export default function SelectLocation({
 
       {isOpen && (
         <>
-          <div className="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden p-1 animate-in fade-in zoom-in duration-150">
+          <div className="absolute z-[1002] w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden p-1 animate-in fade-in zoom-in duration-150">
             <div className="max-h-60 overflow-y-auto">
               <div
                 onClick={() => handleSelect(null)}
@@ -84,7 +85,7 @@ export default function SelectLocation({
               })}
             </div>
           </div>
-          <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setIsOpen(false)} />
+          <div className="fixed inset-0 z-[1000] bg-transparent" onClick={() => setIsOpen(false)} />
         </>
       )}
     </div>
