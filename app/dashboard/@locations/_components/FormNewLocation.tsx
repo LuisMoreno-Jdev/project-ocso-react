@@ -1,7 +1,7 @@
 import { createLocation } from "@/actions/locations/create";
 import { API_URL } from "@/constants";
+import { Location, Manager } from "@/entities";
 import { authHeaders } from "@/helpers/authHeaders";
-import axios from "axios";
 import SelectManager from "./SelectManager";
 
 // CAMBIO: La función debe ser async y searchParams debe tratarse como Promise
@@ -13,13 +13,28 @@ export default async function FormNewLocation({ searchParams }: { searchParams: 
   // Si existe el query param 'store', no renderizamos nada
   if (params.store) return null;
 
+  const resolvedHeaders = await authHeaders();
+
   // Llamadas a la API
-  const { data: managers } = await axios.get(`${API_URL}/managers`, {
-    headers: await authHeaders()
+  const  responseManagers = await fetch(`${API_URL}/managers`, {
+    method: "GET",
+    headers: {
+        ...(resolvedHeaders as Record<string, string>),
+        "Content-Type": "application/json",
+      },
   });
-  const { data: locations } = await axios.get(`${API_URL}/locations`, {
-    headers: await authHeaders()
+  const dataManager: Manager[] = await responseManagers.json()
+  const responseLocations = await fetch(`${API_URL}/locations`, {
+    method: "GET",
+    headers: {
+        ...(resolvedHeaders as Record<string, string>),
+        "Content-Type": "application/json",
+      },
+    next: {
+      tags: ["dashboard:locations"],
+    }
   });
+  const dataLocation: Location[] = await responseLocations.json()
 
   return (
     <div className="w-full max-w-md mt-10 animate-in fade-in zoom-in duration-500">
@@ -73,7 +88,7 @@ export default async function FormNewLocation({ searchParams }: { searchParams: 
           />
         </div>
 
-        <SelectManager managers={managers} locations={locations}/>
+        <SelectManager managers={dataManager} locations={dataLocation}/>
 
         <button
           type="submit"

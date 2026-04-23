@@ -1,51 +1,50 @@
-'use server';
-import { API_URL, COOKIE_NAME } from "@/constants";
-import axios from "axios";
-import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
+"use server";
+import { API_URL } from "@/constants";
+import { authHeaders } from "@/helpers/authHeaders";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function createLocation(formData: FormData) {
-    const cookieStore = await cookies();
-    const rawCookie = cookieStore.get(COOKIE_NAME)?.value;
-    
-    if (!rawCookie) return; 
+  let location: any = {};
+  let locationLatLng = [0, 0];
 
-    const decodedCookie = decodeURIComponent(rawCookie);
-    const cookieData = JSON.parse(decodedCookie.startsWith('j:') ? decodedCookie.slice(2) : decodedCookie);
-    const token = cookieData.token;
+  for (const key of formData.keys()) {
+    const value = formData.get(key);
 
-    let location: any = {}
-    let locationLatLng = [0, 0]
-
-    for (const key of formData.keys()) {
-        const value = formData.get(key);
-        
-        if (value) {
-            if (key === 'locationLat') {
-                locationLatLng[0] = +value;
-            } else if (key === 'locationLng') {
-                locationLatLng[1] = +value;
-            } else {
-                // Aquí 'managerId' se guardará como 'managerId'
-                // que es lo que pide tu DTO específicamente.
-                location[key] = value;
-            }
-        }
+    if (value) {
+      if (key === "locationLat") {
+        locationLatLng[0] = +value;
+      } else if (key === "locationLng") {
+        locationLatLng[1] = +value;
+      } else {
+        // Aquí 'managerId' se guardará como 'managerId'
+        // que es lo que pide tu DTO específicamente.
+        location[key] = value;
+      }
     }
+  }
 
-    location.locationLatLng = locationLatLng; 
+  location.locationLatLng = locationLatLng;
 
-    // LOG PARA VERIFICAR: Debe decir "managerId": "UUID..."
-    console.log("Objeto enviado al backend:", JSON.stringify(location, null, 2));
+  // LOG PARA VERIFICAR: Debe decir "managerId": "UUID..."
+  console.log("Objeto enviado al backend:", JSON.stringify(location, null, 2));
 
-    try {
-        await axios.post(`${API_URL}/locations`, location, {
-            headers: {
-                Authorization: `Bearer ${token}` 
-            }
-        });
-        revalidatePath("/dashboard/locations");
-    } catch (error: any) {
-        console.error("Error del Servidor:", error.response?.data || error.message);
+  try {
+    const resolvedHeaders = await authHeaders();
+
+    const response = await fetch(`${API_URL}/locations`, {
+      method: "POST",
+      headers: {
+        ...(resolvedHeaders as Record<string, string>),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(location),
+    });
+
+    if (response.status === 201) {
+    revalidateTag("dashboard:locations", ""); 
     }
+    revalidatePath("/dashboard/locations");
+  } catch (error: any) {
+    console.error("Error del Servidor:", error.message);
+  }
 }

@@ -1,23 +1,23 @@
 "use client";
 import { API_URL } from "@/constants";
 import { Button, Input, Link } from "@heroui/react";
-import axios from "axios";
 import { useRouter } from 'next/navigation';
 import { useState } from "react";
 
 export default function LoginPage() {
     const [submitting, setSubmitting] = useState(false)
     const router = useRouter();
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => { // Añade el tipo al evento
-    e.preventDefault();
+    const handleSubmit = async (e: any) => {
     setSubmitting(true);
-
+    e.preventDefault();
     const formData = new FormData(e.currentTarget); // Usa currentTarget, es más seguro en React
     const authData = Object.fromEntries(formData.entries()); // Forma limpia de convertir FormData a Objeto
 
     try {
-        const response = await axios.post(`${API_URL}/auth/login`, authData, {
-            withCredentials: true
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            body: JSON.stringify(authData),
+            credentials: "include",
         });
 
         // NestJS por defecto devuelve 201 para POST exitosos, así que esto está bien
