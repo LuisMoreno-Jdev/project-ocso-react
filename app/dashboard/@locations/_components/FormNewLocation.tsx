@@ -22,8 +22,12 @@ export default async function FormNewLocation({ searchParams }: { searchParams: 
         ...(resolvedHeaders as Record<string, string>),
         "Content-Type": "application/json",
       },
+      next: {
+        tags: ["dashboard:managers"],
+      }
   });
   const dataManager: Manager[] = await responseManagers.json()
+
   const responseLocations = await fetch(`${API_URL}/locations`, {
     method: "GET",
     headers: {

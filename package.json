@@ -10,6 +10,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@gravity-ui/icons": "^2.18.0",
     "@heroui/react": "^3.0.3",
     "@heroui/styles": "^3.0.1",
     "framer-motion": "^12.38.0",

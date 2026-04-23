@@ -2,7 +2,8 @@
 
 import { API_URL } from "@/constants";
 import { authHeaders } from "@/helpers/authHeaders";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 
 export default async function DeleteLocation(formData: FormData) {
   const locationId = formData.get("locationId"); // Asegúrate de que coincida con el name del input
@@ -18,9 +19,10 @@ export default async function DeleteLocation(formData: FormData) {
         "Content-Type": "application/json",
       },
     });
-
+    revalidateTag("dashboard:locations", "");
     // Refresca la ruta para que la tienda desaparezca de la lista
     revalidatePath("/dashboard/locations");
+    redirect("/dashboard");
   } catch (error) {
     console.error("Error al eliminar:", error);
   }
