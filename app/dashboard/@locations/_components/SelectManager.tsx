@@ -7,30 +7,32 @@ import { LuChevronDown } from "react-icons/lu";
 interface SelectManagerProps {
   managers: Manager[];
   locations: Location[];
-  defaultManager?: string; // El ID del manager que viene del backend
+  defaultManager?: string; 
 }
 
 export default function SelectManager({ managers, locations, defaultManager }: SelectManagerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Manager | null>(null);
 
-  // 1. Efecto para inicializar el manager por defecto
+  // Sincronización refinada: 
+  // Cada vez que defaultManager cambie desde las props (tras el save), actualizamos el estado.
   useEffect(() => {
     if (defaultManager) {
       const manager = managers.find(m => m.managerId === defaultManager);
-      if (manager) setSelected(manager);
+      if (manager) {
+        setSelected(manager);
+      }
+    } else {
+      setSelected(null);
     }
   }, [defaultManager, managers]);
 
-  /** * 2. Lógica de bloqueo implementada como en la imagen
-   * Se genera un arreglo de IDs ocupados, pero se excluye explícitamente 
-   * al manager que ya pertenece a esta tienda.
-   */
+  // Lógica de bloqueo (idéntica a la solicitada anteriormente)
   const disabledKeys = locations.map((location: Location) => {
     if (location.manager?.managerId !== defaultManager) {
       return location.manager?.managerId;
     }
-  }).filter(id => id !== undefined); // Limpiamos los valores undefined
+  }).filter(id => id !== undefined);
 
   const handleSelect = (manager: Manager, isDisabled: boolean) => {
     if (isDisabled) return;
@@ -40,10 +42,11 @@ export default function SelectManager({ managers, locations, defaultManager }: S
 
   return (
     <div className="relative w-full font-sans">
-      {/* Input oculto para el Server Action */}
+      {/* IMPORTANTE: Asegúrate de que el name sea "managerId" 
+          para que coincida con lo que espera tu Backend 
+      */}
       <input type="hidden" name="managerId" value={selected?.managerId || ""} />
 
-      {/* Gatillo del Select */}
       <div 
         onClick={() => setIsOpen(!isOpen)}
         className="w-full bg-white rounded-2xl p-4 border border-gray-100 cursor-pointer transition-all hover:ring-2 hover:ring-orange-100 flex justify-between items-center shadow-sm"
@@ -59,7 +62,6 @@ export default function SelectManager({ managers, locations, defaultManager }: S
         <LuChevronDown className={`text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
       </div>
 
-      {/* Menú Desplegable */}
       {isOpen && (
         <>
           <div className="absolute z-[1010] w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl overflow-hidden p-1 animate-in fade-in zoom-in duration-150">
