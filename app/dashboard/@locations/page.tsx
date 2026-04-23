@@ -13,13 +13,11 @@ interface Props {
 }
 
 const LocationsPage = async ({ searchParams }: Props) => {
-  // 1. Resolución de parámetros de búsqueda (Next.js 15)
   const resolvedParams = await searchParams;
   const store = resolvedParams.store;
 
   let locations: Location[] = [];
 
-  // 2. Obtención de datos con headers tipados
   try {
     const resolvedHeaders = await authHeaders();
     const response = await fetch(`${API_URL}/locations`, {
@@ -47,23 +45,20 @@ const LocationsPage = async ({ searchParams }: Props) => {
 
       {/* Sección de Información de la Tienda y Acciones */}
       <div className="w-full max-w-2xl px-4 flex flex-col items-center gap-6">
-        {/* Carta de Manager y Mapa */}
         <LocationCard store={store} />
 
-        {/* Contenedor de Botones (Separados de la carta) */}
-        <div className="flex flex-col items-center gap-4 w-full">
+        {/* Contenedor de Botones - AHORA EN FILA Y MÁS ANCHO */}
+        <div className="flex flex-row items-center justify-center gap-6 w-full max-w-sm">
           <DeleteLocationButton store={store} />
           
-          <UpdateLocation>
+          <UpdateLocation store={store}>
             <FormUpdateLocation searchParams={searchParams} />
           </UpdateLocation>
         </div>
       </div>
 
-      {/* Separador visual opcional */}
       <hr className="w-full max-w-md border-gray-200" />
 
-      {/* Formulario de Nueva Ubicación (Al final con su propio espacio) */}
       <div className="w-full flex justify-center px-4 mb-10">
         <FormNewLocation searchParams={searchParams} />
       </div>

@@ -14,7 +14,7 @@ export default function SelectManager({ managers, locations, defaultManager }: S
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Manager | null>(null);
 
-  // 1. Efecto para inicializar el manager por defecto (Lo que hizo el profe en la img)
+  // 1. Efecto para inicializar el manager por defecto
   useEffect(() => {
     if (defaultManager) {
       const manager = managers.find(m => m.managerId === defaultManager);
@@ -22,10 +22,15 @@ export default function SelectManager({ managers, locations, defaultManager }: S
     }
   }, [defaultManager, managers]);
 
-  // 2. Lógica de bloqueo: Bloqueamos managers ocupados, EXCEPTO el que ya tiene esta tienda
-  const disabledKeys = locations
-    .map((location: Location) => location.manager?.managerId)
-    .filter((managerId) => managerId !== undefined && managerId !== defaultManager);
+  /** * 2. Lógica de bloqueo implementada como en la imagen
+   * Se genera un arreglo de IDs ocupados, pero se excluye explícitamente 
+   * al manager que ya pertenece a esta tienda.
+   */
+  const disabledKeys = locations.map((location: Location) => {
+    if (location.manager?.managerId !== defaultManager) {
+      return location.manager?.managerId;
+    }
+  }).filter(id => id !== undefined); // Limpiamos los valores undefined
 
   const handleSelect = (manager: Manager, isDisabled: boolean) => {
     if (isDisabled) return;
@@ -35,7 +40,7 @@ export default function SelectManager({ managers, locations, defaultManager }: S
 
   return (
     <div className="relative w-full font-sans">
-      {/* Input oculto con el valor para el Server Action (usar managerId para evitar error 400) */}
+      {/* Input oculto para el Server Action */}
       <input type="hidden" name="managerId" value={selected?.managerId || ""} />
 
       {/* Gatillo del Select */}
@@ -94,7 +99,6 @@ export default function SelectManager({ managers, locations, defaultManager }: S
               )}
             </div>
           </div>
-          {/* Backdrop para cerrar el select */}
           <div className="fixed inset-0 z-[1005]" onClick={() => setIsOpen(false)} />
         </>
       )}
