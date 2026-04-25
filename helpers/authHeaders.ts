@@ -3,26 +3,30 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 
 export const authHeaders = cache(async () => {
-    const cookieStore = await cookies(); // Correcto: await para Next.js 15
-    const rawCookie = cookieStore.get(COOKIE_NAME)?.value;
-
-    // En lugar de lanzar Error (que puede romper el renderizado), 
-    // devolvemos un objeto vacío si no hay sesión.
-    if (!rawCookie) return {}; 
-
     try {
+        const cookieStore = await cookies(); 
+        const rawCookie = cookieStore.get(COOKIE_NAME)?.value;
+
+        if (!rawCookie) return {}; 
+
         let decodedCookie = decodeURIComponent(rawCookie);
-        if (decodedCookie.startsWith('j:')) decodedCookie = decodedCookie.slice(2);
+        
+        // Manejo del prefijo 'j:' que pone express-session/cookie-parser
+        if (decodedCookie.startsWith('j:')) {
+            decodedCookie = decodedCookie.slice(2);
+        }
         
         const cookieData = JSON.parse(decodedCookie);
         const token = cookieData.token;
+
+        if (!token) return {};
 
         return {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         };
     } catch (error) {
-        console.error("Error parseando la cookie de auth:", error);
+        console.error("Error en authHeaders:", error);
         return {};
     }
 });

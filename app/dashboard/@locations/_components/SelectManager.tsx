@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Location, Manager } from "@/entities";
 import { useEffect, useState } from "react";
@@ -7,18 +7,22 @@ import { LuChevronDown } from "react-icons/lu";
 interface SelectManagerProps {
   managers: Manager[];
   locations: Location[];
-  defaultManager?: string; 
+  defaultManager?: string;
 }
 
-export default function SelectManager({ managers, locations, defaultManager }: SelectManagerProps) {
+export default function SelectManager({
+  managers,
+  locations,
+  defaultManager,
+}: SelectManagerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Manager | null>(null);
 
-  // Sincronización refinada: 
+  // Sincronización refinada:
   // Cada vez que defaultManager cambie desde las props (tras el save), actualizamos el estado.
   useEffect(() => {
     if (defaultManager) {
-      const manager = managers.find(m => m.managerId === defaultManager);
+      const manager = managers.find((m) => m.managerId === defaultManager);
       if (manager) {
         setSelected(manager);
       }
@@ -28,11 +32,13 @@ export default function SelectManager({ managers, locations, defaultManager }: S
   }, [defaultManager, managers]);
 
   // Lógica de bloqueo (idéntica a la solicitada anteriormente)
-  const disabledKeys = locations.map((location: Location) => {
-    if (location.manager?.managerId !== defaultManager) {
-      return location.manager?.managerId;
-    }
-  }).filter(id => id !== undefined);
+  const disabledKeys = locations
+    .map((location: Location) => {
+      if (location.manager?.managerId !== defaultManager) {
+        return location.manager?.managerId;
+      }
+    })
+    .filter((id) => id !== undefined);
 
   const handleSelect = (manager: Manager, isDisabled: boolean) => {
     if (isDisabled) return;
@@ -47,7 +53,7 @@ export default function SelectManager({ managers, locations, defaultManager }: S
       */}
       <input type="hidden" name="managerId" value={selected?.managerId || ""} />
 
-      <div 
+      <div
         onClick={() => setIsOpen(!isOpen)}
         className="w-full bg-white rounded-2xl p-4 border border-gray-100 cursor-pointer transition-all hover:ring-2 hover:ring-orange-100 flex justify-between items-center shadow-sm"
       >
@@ -55,11 +61,15 @@ export default function SelectManager({ managers, locations, defaultManager }: S
           <label className="text-[10px] uppercase font-bold text-gray-500 leading-tight mb-1">
             Manager de la Tienda
           </label>
-          <span className={`text-sm font-semibold ${selected ? "text-gray-900" : "text-gray-400"}`}>
+          <span
+            className={`text-sm font-semibold ${selected ? "text-gray-900" : "text-gray-400"}`}
+          >
             {selected ? selected.managerFullName : "Selecciona un manager"}
           </span>
         </div>
-        <LuChevronDown className={`text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        <LuChevronDown
+          className={`text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        />
       </div>
 
       {isOpen && (
@@ -67,7 +77,9 @@ export default function SelectManager({ managers, locations, defaultManager }: S
           <div className="absolute z-[1010] w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl overflow-hidden p-1 animate-in fade-in zoom-in duration-150">
             <div className="max-h-56 overflow-y-auto">
               {managers.length === 0 ? (
-                <div className="px-4 py-3 text-xs text-gray-400 italic">No hay managers cargados</div>
+                <div className="px-4 py-3 text-xs text-gray-400 italic">
+                  No hay managers cargados
+                </div>
               ) : (
                 managers.map((manager) => {
                   const isDisabled = disabledKeys.includes(manager.managerId);
@@ -78,11 +90,12 @@ export default function SelectManager({ managers, locations, defaultManager }: S
                       key={manager.managerId}
                       onClick={() => handleSelect(manager, isDisabled)}
                       className={`px-4 py-3 text-sm rounded-lg transition-colors flex justify-between items-center font-medium
-                        ${isDisabled 
-                          ? "opacity-30 cursor-not-allowed bg-gray-50 text-gray-400" 
-                          : isSelected 
-                            ? "bg-orange-50 text-orange-700 cursor-pointer" 
-                            : "text-gray-700 hover:bg-gray-50 cursor-pointer"
+                        ${
+                          isDisabled
+                            ? "opacity-30 cursor-not-allowed bg-gray-50 text-gray-400"
+                            : isSelected
+                              ? "bg-orange-50 text-orange-700 cursor-pointer"
+                              : "text-gray-700 hover:bg-gray-50 cursor-pointer"
                         }`}
                     >
                       <span>{manager.managerFullName}</span>
@@ -90,10 +103,12 @@ export default function SelectManager({ managers, locations, defaultManager }: S
                         <span className="text-[9px] uppercase font-bold bg-gray-200 px-2 py-0.5 rounded text-gray-500">
                           Ocupado
                         </span>
-                      ) : isSelected && (
-                        <span className="text-[9px] uppercase font-bold bg-orange-200 px-2 py-0.5 rounded text-orange-700">
-                          Actual
-                        </span>
+                      ) : (
+                        isSelected && (
+                          <span className="text-[9px] uppercase font-bold bg-orange-200 px-2 py-0.5 rounded text-orange-700">
+                            Actual
+                          </span>
+                        )
                       )}
                     </div>
                   );
@@ -101,7 +116,10 @@ export default function SelectManager({ managers, locations, defaultManager }: S
               )}
             </div>
           </div>
-          <div className="fixed inset-0 z-[1005]" onClick={() => setIsOpen(false)} />
+          <div
+            className="fixed inset-0 z-[1005]"
+            onClick={() => setIsOpen(false)}
+          />
         </>
       )}
     </div>

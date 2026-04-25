@@ -1,4 +1,4 @@
-"use client"; // Esencial para que dynamic(ssr: false) funcione
+"use client";
 import dynamic from "next/dynamic";
 
 const MapWithNoSSR = dynamic(() => import("./StoreMap"), {
@@ -19,7 +19,15 @@ interface MapSectionProps {
 export default function MapSection({ lat, lng, storeName }: MapSectionProps) {
     return (
         <div className="w-full h-64 border-b border-gray-200 overflow-hidden">
-            <MapWithNoSSR lat={lat} lng={lng} storeName={storeName} />
+            {/* Añadir 'key' es el truco definitivo: 
+                Cuando lat o lng cambian, el componente se remonta por completo.
+            */}
+            <MapWithNoSSR 
+                key={`${lat}-${lng}`} 
+                lat={lat} 
+                lng={lng} 
+                storeName={storeName} 
+            />
         </div>
     );
 }
