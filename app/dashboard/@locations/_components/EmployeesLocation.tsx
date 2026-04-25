@@ -7,11 +7,12 @@ export default async function EmployeesLocation({
 }: {
   store: string | string[] | undefined;
 }) {
+  // Estado inicial: Selección de tienda
   if (!store || store === "undefined") {
     return (
-      /* Eliminamos h-full para que no se estire al centro de la pantalla */
-      <div className="flex flex-col items-center justify-center w-full max-w-md">
-        <div className="bg-white/50 border-2 border-dashed border-gray-200 rounded-[2rem] p-8 text-center w-full">
+      /* Aplicamos h-[90vh] para mantener consistencia, pero alineamos al inicio */
+      <div className="w-full h-[90vh] max-h-[90vh] flex flex-col items-center justify-start pt-20 px-6">
+        <div className="w-full max-w-sm bg-white/50 border-2 border-dashed border-orange-200 rounded-[2rem] p-10 text-center">
           <p className="text-gray-500 font-medium italic">
             Selecciona una ubicación para gestionar los empleados
           </p>
@@ -20,58 +21,47 @@ export default async function EmployeesLocation({
     );
   }
 
-  let tokenValue: string | undefined = undefined;
-
   try {
     const resolvedHeaders = await authHeaders();
-
     const response = await fetch(`${API_URL}/employees/location/${store}`, {
       method: "GET",
       headers: {
         ...(resolvedHeaders as Record<string, string>),
         "Content-Type": "application/json",
       },
-      next: {
-        tags: ["dashboard:locations:employees"],
-      }
+      next: { tags: ["dashboard:locations:employees"] }
     });
+
     const data: Employee[] = await response.json();
+
     if (!data || data.length === 0) {
       return (
-        <div className="p-10 text-center">
-          <p className="text-gray-400 italic">
-            Sin empleados en esta ubicación.
-          </p>
+        <div className="w-full h-[90vh] max-h-[90vh] pt-20 text-center">
+          <p className="text-gray-400 italic">Sin empleados en esta ubicación.</p>
         </div>
       );
     }
 
     return (
-      <div className="flex flex-col gap-4 p-4 bg-transparent font-sans animate-in fade-in duration-500">
+      <div className="w-full h-[90vh] max-h-[90vh] overflow-y-auto flex flex-col items-start justify-start gap-4 p-6 animate-in fade-in duration-500">
         {data.map((employee: Employee) => {
           const fullName = `${employee.employeeName} ${employee.employeeLastName}`;
           return (
             <div
               key={employee.employeeId}
-              className="bg-white rounded-[2rem] shadow-sm border border-gray-100 flex flex-col overflow-hidden w-full max-w-md transition-transform hover:scale-[1.01]"
+              /* w-full para que ocupe todo el ancho de su columna */
+              className="w-full bg-white rounded-[1.5rem] shadow-sm border border-orange-100 flex flex-col overflow-hidden transition-all hover:shadow-md shrink-0"
             >
-              <div className="px-6 py-4 border-b border-gray-100">
-                <p className="text-lg text-gray-900">
-                  Nombre: <span className="font-bold">{fullName}</span>
-                </p>
+              <div className="px-6 py-4 border-b border-orange-50">
+                <p className="text-[10px] text-orange-400 uppercase font-black tracking-widest mb-1">Empleado</p>
+                <p className="text-lg font-bold text-gray-900">{fullName}</p>
               </div>
-              <div className="px-6 py-4 flex flex-col gap-1">
-                <p className="text-lg text-gray-900">
-                  Email:{" "}
-                  <span className="font-bold">
-                    {employee.employeeEmail || "N/A"}
-                  </span>
+              <div className="px-6 py-4 flex flex-col gap-2 bg-orange-50/10">
+                <p className="text-sm text-gray-600">
+                  <span className="font-bold text-gray-400">Email:</span> {employee.employeeEmail || "N/A"}
                 </p>
-                <p className="text-lg text-gray-900">
-                  Teléfono:{" "}
-                  <span className="font-bold">
-                    {employee.employeePhoneNumber || "Sin número"}
-                  </span>
+                <p className="text-sm text-gray-600">
+                  <span className="font-bold text-gray-400">Tel:</span> {employee.employeePhoneNumber || "---"}
                 </p>
               </div>
             </div>
@@ -79,10 +69,10 @@ export default async function EmployeesLocation({
         })}
       </div>
     );
-  } catch (error: any) {
+  } catch (error) {
     return (
-      <div className="text-red-500 p-10 text-center font-bold">
-        Error al conectar con el servidor.
+      <div className="w-full h-[90vh] p-10 text-center text-red-500 font-bold">
+        Error al cargar empleados.
       </div>
     );
   }

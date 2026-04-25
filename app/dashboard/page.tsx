@@ -11,7 +11,7 @@ export default async function DashboardPage({
   return (
     <>
       <div className="h-full w-4/12">
-          <div className="h-[90vh] overflow-hidden overflow-y-auto">
+          <div className="h-[90vh] max-h-[90vh] overflow-hidden overflow-y-auto">
             <EmployeesLocation store={store} />
           </div>
       </div>
