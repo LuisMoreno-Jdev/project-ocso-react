@@ -47,7 +47,7 @@ export default async function LocationCard({
               {data.manager ? (
                 <Link
                   href={`/dashboard/managers/${data.manager.managerId}`}
-                  className="hover:text-red-600 transition-colors"
+                  className="hover:text-red-600 transition-colors underline"
                 >
                   {data.manager.managerFullName}
                 </Link>
