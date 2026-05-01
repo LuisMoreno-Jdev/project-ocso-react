@@ -1,6 +1,7 @@
 import { API_URL } from "@/constants";
 import { Manager } from "@/entities";
 import { authHeaders } from "@/helpers/authHeaders";
+import DeleteManagerButton from "./_components/DeleteManagerButton";
 import ManagersCard from "./_components/ManagersCard";
 
 export default async function ManagerPage({ 
@@ -31,6 +32,9 @@ export default async function ManagerPage({
   return (
     <div className="w-full">
       <ManagersCard manager={data} />
+      <div className="rounded-md px-10 py-2 flex items-center justify-center">
+        <DeleteManagerButton managerId={id} />
+      </div>
     </div>
   );
 }
