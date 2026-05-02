@@ -3,6 +3,8 @@
 import updateProvider from "@/actions/providers/update";
 import { Provider } from "@/entities";
 import { Button, Input, Label } from "@heroui/react";
+import ModalDeleteProvider from "./DeleteProvider";
+import FormDeleteProvider from "./FormDeleteProvider";
 
 export default function FormUpdateProvider({ provider }: { provider: Provider }) {
     // El .bind es correcto, el problema era el filtrado en el Action
@@ -63,6 +65,11 @@ export default function FormUpdateProvider({ provider }: { provider: Provider })
         >
           Guardar Cambios
         </Button>
+        <div className="flex flex-col items-center justify-center">
+          <ModalDeleteProvider>
+            <FormDeleteProvider provider={provider} />
+          </ModalDeleteProvider>
+        </div>
       </form>
     )
 }

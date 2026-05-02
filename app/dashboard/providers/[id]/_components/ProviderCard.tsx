@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, Separator } from "@heroui/rea
 
 export default function ProviderCard({ provider }: { provider: Provider }) {
     return (
-        <Card className="max-w-[350px] shadow-sm border border-gray-200">
+        <Card className="max-w-[350px] w-full shadow-sm border border-gray-200">
             <CardHeader className="flex px-4 py-3">
                 <CardTitle className="text-lg font-semibold text-gray-800">
                     {provider.providerName}
