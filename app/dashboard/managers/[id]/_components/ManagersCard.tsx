@@ -31,6 +31,9 @@ export default function ManagersCard({ manager }: ManagerCardProps) {
                 <span className="font-semibold">Teléfono:</span> {manager.managerPhoneNumber || "---"}
               </p>
               <p className="text-2xl text-gray-800">
+                <span className="font-semibold">Salario:</span> {manager.managerSalary || "---"}
+              </p>
+              <p className="text-2xl text-gray-800">
                 <span className="font-semibold">Tienda:</span>{" "}
                 {manager.location ? (
                   <Link 
