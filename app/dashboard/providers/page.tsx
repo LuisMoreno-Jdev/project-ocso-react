@@ -23,7 +23,7 @@ const Providers = async () => {
       <div className="w-full flex justify-end mb-4 px-4">
         <ModalNewProvider />
       </div>
-      <div className="w-4/12 flex flex-wrap gap-4 px-4">
+      <div className="w-4/12 flex flex-wrap gap-4 px-4 overflow-hidden overflow-y-auto">
         {providers.map((provider: Provider) => (
           <Link
             key={provider.providerId}
