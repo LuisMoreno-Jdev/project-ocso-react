@@ -5,7 +5,7 @@ import { authHeaders } from "@/helpers/authHeaders";
 import SelectStore from "./SelectStore";
 
 export default async function FormUpdateManager({manager}: { manager: Manager }) {
-    const updateManagerById = updateManager.bind(null, manager.managerId);
+    // Obtenemos las tiendas para el selector
     const resolvedHeaders = await authHeaders();
     const response = await fetch(`${API_URL}/locations`, {
       method: "GET",
@@ -15,70 +15,94 @@ export default async function FormUpdateManager({manager}: { manager: Manager })
         },
       })
     const stores = await response.json();
+
+    // Esta es la función que se ejecutará en el cliente/servidor
+    const handleUpdate = async (formData: FormData) => {
+        "use server";
+        await updateManager(manager.managerId, formData);
+    };
+
   return (
     <div className="w-full">
       <form
-        action={updateManagerById}
-        className="bg-orange-400 py-4 px-4 flex flex-col gap-6 w-full"
+        action={handleUpdate}
+        className="bg-orange-400 py-6 px-6 flex flex-col gap-6 w-full rounded-2xl shadow-xl"
       >
         <h1 className="text-3xl text-white text-center font-extrabold uppercase tracking-tight">
           Actualizar Manager
         </h1>
-        <div className="flex flex-col gap-4 bg-white/10 p-4 rounded-xl border border-white/10">
+        
+        <div className="flex flex-col gap-4 bg-white/10 p-6 rounded-xl border border-white/20">
           {/* Input Nombre */}
           <div className="flex flex-col gap-1">
             <label className="text-white text-xs font-bold ml-1 uppercase">
-              Nombre
+              Nombre Completo
             </label>
             <input
               name="managerFullName"
               placeholder="Nombre completo"
               defaultValue={manager.managerFullName}
               className="w-full p-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 shadow-inner"
+              required
             />
           </div>
 
-          {/* Input Dirección */}
+          {/* Input Email */}
           <div className="flex flex-col gap-1">
             <label className="text-white text-xs font-bold ml-1 uppercase">
-              Manager Email
+              Correo Electrónico
             </label>
             <input
               name="managerEmail"
-              placeholder="Correo electrónico"
+              type="email"
+              placeholder="correo@oxxo.com"
               defaultValue={manager.managerEmail}
               className="w-full p-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 shadow-inner"
+              required
             />
           </div>
+
           <div className="flex gap-4">
-            {/* Input Latitud */}
+            {/* Input Salario */}
             <div className="flex flex-col gap-1 w-1/2">
               <label className="text-white text-xs font-bold ml-1 uppercase">
-                Manager Salary
+                Salario
               </label>
               <input
                 name="managerSalary"
-                placeholder="0.000"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
                 defaultValue={manager.managerSalary}
                 className="w-full p-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 shadow-inner"
+                required
               />
             </div>
 
-            {/* Input Longitud */}
+            {/* Input Teléfono */}
             <div className="flex flex-col gap-1 w-1/2">
               <label className="text-white text-xs font-bold ml-1 uppercase">
-                Manager Phone Number
+                Teléfono
               </label>
               <input
                 name="managerPhoneNumber"
-                placeholder="0.000"
+                placeholder="442..."
                 defaultValue={manager.managerPhoneNumber}
                 className="w-full p-3 rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 shadow-inner"
+                required
               />
             </div>
           </div>
-          <SelectStore stores={stores} />
+
+          {/* Selector de Tienda */}
+          <div className="flex flex-col gap-1 w-full">
+            <SelectStore 
+                stores={stores} 
+                defaultStore={manager.location?.locationId} 
+            />
+          </div>
         </div>
+
         <button
           type="submit"
           className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl transition-all active:scale-95 shadow-lg uppercase tracking-wider"

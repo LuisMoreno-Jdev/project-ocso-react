@@ -7,7 +7,7 @@ interface Props {
   children: ReactNode;
 }
 
-export default function UpdateManager({children}: {children: ReactNode}) {
+export default function UpdateManagerById({children}: {children: ReactNode}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleModal = () => setIsOpen(!isOpen);
