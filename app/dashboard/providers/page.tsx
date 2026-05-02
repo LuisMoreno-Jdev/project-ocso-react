@@ -14,6 +14,9 @@ const Providers = async () => {
       ...(resolvedHeaders as Record<string, string>),
       "Content-Type": "application/json",
     },
+    next: {
+      tags: ["dashboard:providers"]
+    }
   });
 
   const providers: Provider[] = await response.json();
