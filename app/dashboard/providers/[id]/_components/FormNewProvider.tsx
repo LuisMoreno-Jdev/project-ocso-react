@@ -18,7 +18,7 @@ export default function FormNewProvider({ close }: { close: () => void }) {
   return (
     <form
       action={handleSubmit}
-      className="bg-[#f08532] p-6 rounded-[2.5rem] shadow-lg flex flex-col gap-4 w-full"
+      className="bg-[#f08532] p-6 rounded-[2.5rem] shadow-lg gap-4 w-4/12 max-w-[400px]"
     >
       <h2 className="text-white text-3xl font-semibold text-center mb-2">
         Agregar Proveedor

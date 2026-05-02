@@ -2,8 +2,8 @@ import { API_URL } from "@/constants";
 import { Provider } from "@/entities";
 import { authHeaders } from "@/helpers/authHeaders";
 import { Link } from "@heroui/react";
-import ModalNewProvider from "./_components/NewProvider";
-import ProviderCard from "./_components/ProviderCard";
+import ModalNewProvider from "./[id]/_components/NewProvider";
+import ProviderCard from "./[id]/_components/ProviderCard";
 
 const Providers = async () => {
   const resolvedHeaders = await authHeaders();

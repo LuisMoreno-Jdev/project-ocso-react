@@ -2,8 +2,9 @@ import { API_URL } from "@/constants";
 import { Product, Provider } from "@/entities";
 import { authHeaders } from "@/helpers/authHeaders";
 import { Link } from "@heroui/react";
-import ProductCard from "../_components/ProductCard";
-import ProviderCard from "../_components/ProviderCard";
+import FormUpdateProvider from "./_components/FormUpdateProvider";
+import ProductCard from "./_components/ProductCard";
+import ProviderCard from "./_components/ProviderCard";
 
 // Definimos la interfaz para que TypeScript sepa que params es una Promesa
 interface Props {
@@ -19,6 +20,9 @@ export default async function ProvidersPage({ params }: Props) {
       ...(resolvedHeaders as Record<string, string>),
       "Content-Type": "application/json",
     },
+    next: {
+      tags: [`dashboard:providers:${id}`],
+    }
   });
   if (!response.ok) {
     return (
@@ -29,8 +33,9 @@ export default async function ProvidersPage({ params }: Props) {
   }
   const provider: Provider = await response.json();
   return (
-    <div className="flex flex-grow-0 flex-col pl-10 gap-10 h-[90vh] pt-10">
+    <div className="flex flex-grow-0 flex-wrap pl-10 gap-10 h-[90vh] pt-10">
         <ProviderCard provider={provider} />
+        <FormUpdateProvider provider={provider} />
         <div className="h-1 bg-orange-900 w-[85vw]"/>
           <div className="flex flex-wrap gap-10">
         {
