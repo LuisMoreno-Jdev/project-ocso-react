@@ -4,7 +4,7 @@ import NavItem from "./NavItem";
 
 export default function Sidebar() {
   return (
-    <nav className="w-1/12 h-[90vh] bg-orange-200 flex flex-col items-center py-10 justify-center gap-10">
+    <nav className="w-1/12 min-w-1/12 h-[90vh] bg-orange-200 flex flex-col items-center py-10 justify-center gap-10">
       <NavItem icon={<LuStore className="text-4xl text-orange-600"/>} path="/dashboard" />
       <NavItem icon={<LuTruck className="text-4xl text-gray-700"/>} path="/dashboard/providers"/>
       <NavItem icon={<LuWheat className="text-4xl text-gray-700"/>} path="/dashboard/products"/>
