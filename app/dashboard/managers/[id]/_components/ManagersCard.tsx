@@ -1,6 +1,10 @@
 import MapSection from "@/app/dashboard/@locations/_components/MapSection";
+import GenericModal from "@/app/dashboard/_components/GenericModal";
 import { Manager } from "@/entities";
 import Link from "next/link";
+import { LuPen, LuUserPlus } from "react-icons/lu";
+import FormCreateUserManager from "./FormCreateUser";
+import FormUpdateUserManager from "./FormUpdateUser";
 
 interface ManagerCardProps {
   manager: Manager;
@@ -17,6 +21,19 @@ export default function ManagersCard({ manager }: ManagerCardProps) {
             <h2 className="text-5xl font-bold text-gray-800 tracking-tight">
               {manager.managerFullName}
             </h2>
+            {
+              manager.user ? (
+                <GenericModal icon={<LuPen  size="20" />}>
+                  <FormUpdateUserManager manager={manager} user={manager.user} />
+                </GenericModal>
+              ) : (
+                (
+              <GenericModal icon={<LuUserPlus  size="20" />}>
+                  <FormCreateUserManager manager={manager} />
+              </GenericModal>
+            )
+              )
+            }  
           </div>
 
           {/* Body - Layout Horizontal */}

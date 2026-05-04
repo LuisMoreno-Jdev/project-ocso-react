@@ -9,7 +9,7 @@ export default function EmployeePhotoCard({ employee }: { employee: Employee }) 
   
   const photoUrl = hasPhoto 
     ? `http://127.0.0.1:4000/employees/photos/${employee.employeePhoto}`
-    : "/default-avatar.png"; 
+    : "https://media.tenor.com/gKcD4uEMYr8AAAAe/gato-dormindo-dormindo.png"; 
 
   return (
     <Card className="relative size-72 max-h-72 shadow-lg border-none overflow-hidden group">

@@ -2,7 +2,7 @@
 
 import { API_URL } from "@/constants";
 import { authHeaders } from "@/helpers/authHeaders";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 export default async function updateEmployee(employeeId: string, formData: FormData) {
@@ -48,6 +48,7 @@ export default async function updateEmployee(employeeId: string, formData: FormD
   // Si llegamos aquí, la actualización fue exitosa
   revalidateTag("dashboard:employees", "max");
   revalidateTag(`dashboard:employees:${employeeId}`, "max");
+  revalidatePath(`/dashboard/employees/${employeeId}`);
   
   redirect(`/dashboard/employees/${employeeId}`);
 }

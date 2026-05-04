@@ -1,13 +1,15 @@
 import { Employee } from "@/entities";
-import Image from "next/image";
 import Link from "next/link";
+import { CreateUserModal } from "./CreateUser";
 import DeleteEmployee from "./DeleteEmployee";
+import FormCreateUserEmployee from "./FormCreateUser";
+import FormUpdateUserEmployee from "./FormUpdateUser";
 
 export default function EmployeeDataCard({ employee }: { employee: Employee }){
     const hasPhoto = employee.employeePhoto && employee.employeePhoto !== "null";
   const photoUrl = hasPhoto 
     ? `http://127.0.0.1:4000/employees/photos/${employee.employeePhoto}`
-    : "/default-avatar.png"; 
+    : "https://media.tenor.com/gKcD4uEMYr8AAAAe/gato-dormindo-dormindo.png"; 
 
     return(
       <div className="flex flex-row items-stretch shadow-2xl rounded-[2.5rem] overflow-hidden border-3 border-orange-400 bg-white gap-2">
@@ -40,14 +42,15 @@ export default function EmployeeDataCard({ employee }: { employee: Employee }){
 
         {/* Lado Derecho: Imagen */}
         <div className="relative size-72 flex-shrink-0 overflow-hidden">
-          <Image 
-            src={photoUrl} 
-            alt={`Foto de ${employee.employeeName}`}
-            fill 
-            sizes="288px"
-            className="object-cover hover:scale-110 transition-transform duration-500"
-            unoptimized
-          />
+          <CreateUserModal photo={photoUrl}>
+            {
+              !employee.user ? (
+                <FormCreateUserEmployee employee={employee} />
+              ) : (
+                <FormUpdateUserEmployee user={employee.user} employee={employee} />
+              )
+          }
+          </CreateUserModal>
         </div>
       </div>
     )
