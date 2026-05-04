@@ -1,12 +1,12 @@
 import { API_URL } from "@/constants";
-import { Employee } from "@/entities";
 import { authHeaders } from "@/helpers/authHeaders";
-import EmployeeCard from "./_components/EmployeeCard";
-import EmployeePhotoCard from "./_components/EmployeePhotoCard";
+import { CreateEmployeeModal } from "./_components/CreateEmployee";
+import FormEmployeeContainer from "./_components/FormEmployeeContainer";
+import ListEmployees from "./_components/ListEmployees";
 
 const Employees = async () => {
   const resolvedHeaders = await authHeaders();
-  const response = await fetch(`${API_URL}/employees`, {
+  const responseEmployees = await fetch(`${API_URL}/employees`, {
     method: "GET",
     headers: {
       ...(resolvedHeaders as Record<string, string>),
@@ -17,25 +17,25 @@ const Employees = async () => {
       tags: [`dashboard:employees`],
     }
   });
+  const responseLocations = await fetch(`${API_URL}/locations`, {
+    method: "GET",
+    headers: {
+      ...(resolvedHeaders as Record<string, string>),
+      "Content-Type": "application/json",
+    }
+  });
   
-  const employees = await response.json();
+  const employees = await responseEmployees.json();
+  const locations = await responseLocations.json();
 
   return (
     <div className="flex flex-wrap h-[90vh] gap-6 overflow-y-auto p-10 justify-start itesms-start">
-      {employees.map((employee: Employee) => {
-        // Validación robusta: que no sea null, que no sea undefined y que no sea el string "null"
-        const hasValidPhoto = 
-            employee.employeePhoto !== null && 
-            employee.employeePhoto !== undefined && 
-            employee.employeePhoto !== "null" &&
-            employee.employeePhoto !== "";
-
-        return hasValidPhoto ? (
-          <EmployeePhotoCard key={employee.employeeId} employee={employee} />
-        ) : (
-          <EmployeeCard key={employee.employeeId} employee={employee} />
-        );
-      })}
+      <ListEmployees employees={employees} locations={locations} />
+      <div className="absolute bottom-10 right-10">
+          <CreateEmployeeModal>
+            <FormEmployeeContainer />
+          </CreateEmployeeModal>
+        </div>
     </div>
   );
 };

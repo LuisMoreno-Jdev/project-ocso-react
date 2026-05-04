@@ -1,6 +1,7 @@
 import { Employee } from "@/entities";
 import Image from "next/image";
 import Link from "next/link";
+import DeleteEmployee from "./DeleteEmployee";
 
 export default function EmployeeDataCard({ employee }: { employee: Employee }){
     const hasPhoto = employee.employeePhoto && employee.employeePhoto !== "null";
@@ -16,7 +17,7 @@ export default function EmployeeDataCard({ employee }: { employee: Employee }){
            <h1 className="text-2xl font-bold text-center text-gray-800 leading-tight">
              {employee.employeeName} {employee.employeeLastName}
            </h1>
-           <div className="mt-4 space-y-1">
+           <div className="mt-4 space-y-1 py-5">
              <p className="text-center text-gray-500 text-sm italic">{employee.employeeEmail}</p>
              <p className="text-center text-orange-600 font-medium">{employee.employeePhoneNumber}</p>
              {employee.location ? (
@@ -28,6 +29,9 @@ export default function EmployeeDataCard({ employee }: { employee: Employee }){
                 ) : (
                 <p className="text-center text-gray-400 text-xs italic">Sin ubicación</p>
               )}
+           </div>
+           <div>
+              <DeleteEmployee employeeId={employee.employeeId} />
            </div>
         </div>
 

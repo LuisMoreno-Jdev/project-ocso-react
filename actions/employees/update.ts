@@ -7,18 +7,21 @@ import { redirect } from "next/navigation";
 
 export default async function updateEmployee(employeeId: string, formData: FormData) {
   const resolvedHeaders = await authHeaders();
-  
-  // Clonamos los headers y eliminamos MANUALMENTE cualquier rastro de Content-Type
-  // para que el fetch asigne correctamente el boundary de FormData
   const headers = { ...(resolvedHeaders as Record<string, string>) };
   delete headers["Content-Type"]; 
 
   const dataToSend = new FormData();
 
+  // Procesamos los campos manualmente para asegurar la estructura que el backend espera
   for (const [key, value] of formData.entries()) {
     if (key === "employeePhoto") {
       if (value instanceof File && value.size > 0) {
-        dataToSend.append("file", value); // 'file' debe coincidir con el Interceptor
+        dataToSend.append("file", value);
+      }
+    } else if (key === "location") {
+      // TRANSFORMACIÓN CLAVE: Enviamos como objeto para el DTO de NestJS
+      if (value) {
+        dataToSend.append("location[locationId]", String(value));
       }
     } else if (!key.startsWith("$")) {
       dataToSend.append(key, value);
@@ -28,11 +31,10 @@ export default async function updateEmployee(employeeId: string, formData: FormD
   const response = await fetch(`${API_URL}/employees/${employeeId}`, {
     method: "PATCH",
     headers: headers,
-    body: dataToSend, // Al ser FormData, el navegador pone multipart/form-data automáticamente
+    body: dataToSend,
   });
 
   if (!response.ok) {
-    // Si el error dice "Unexpected token -", el backend falló antes de devolver un JSON válido
     const textError = await response.text(); 
     try {
       const errorData = JSON.parse(textError);
@@ -40,9 +42,10 @@ export default async function updateEmployee(employeeId: string, formData: FormD
     } catch {
       console.error("Error crítico del servidor (No es JSON):", textError);
     }
-    return;
+    return; // Podrías retornar un objeto de error aquí para mostrarlo en el UI
   }
 
+  // Si llegamos aquí, la actualización fue exitosa
   revalidateTag("dashboard:employees", "max");
   revalidateTag(`dashboard:employees:${employeeId}`, "max");
   

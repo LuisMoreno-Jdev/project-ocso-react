@@ -1,10 +1,23 @@
-'use client';
-
 import updateEmployee from "@/actions/employees/update";
+import { API_URL } from "@/constants";
 import { Employee } from "@/entities";
+import { authHeaders } from "@/helpers/authHeaders";
 import { Button, Input, Label } from "@heroui/react";
+import SelectLocation from "../../_components/SelectLocation";
 
-export default function FormUpdateEmployee({ employee }: { employee: Employee }) {
+export default async function FormUpdateEmployee({ employee }: { employee: Employee }) {
+  const resolvedHeaders = await authHeaders();
+  
+  // Obtenemos las tiendas desde el servidor usando las cookies/headers
+  const response = await fetch(`${API_URL}/locations`, {
+    method: "GET",
+    headers: {
+      ...(resolvedHeaders as Record<string, string>),
+    },
+    next: { tags: ["locations"] }
+  });
+
+  const stores = await response.json();
   const employeeId = employee.employeeId;
 
   // Usamos bind para pasar el ID de forma segura a la Server Action
@@ -42,6 +55,11 @@ export default function FormUpdateEmployee({ employee }: { employee: Employee })
             defaultValue={employee.employeeLastName}
             placeholder="Ingrese el apellido"
           />
+        </div>
+        
+         {/* Campo Tienda - Pasamos las tiendas obtenidas del server */}
+        <div className="w-full bg-white rounded-2xl p-2">
+            <SelectLocation stores={stores} />
         </div>
 
         {/* Campo Email */}
