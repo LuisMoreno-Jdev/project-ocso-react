@@ -5,7 +5,7 @@ import { Button, Card, CardContent, CardFooter, CardHeader, Link, Separator } fr
 
 export default function EmployeeCard({ employee }: { employee: Employee }) {
   return (
-    <Card className="relative size-72 max-h-72 shadow-sm border border-gray-200 flex flex-col bg-white">
+    <Card className="relative size-72 max-h-72 shadow-sm border border-gray-200 flex flex-col bg-white bg-orange-50">
       
       <CardHeader className="flex px-4 py-3">
         <h1 className="font-bold text-xl text-gray-800">
